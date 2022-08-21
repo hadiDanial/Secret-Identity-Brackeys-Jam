@@ -72,3 +72,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 Brackeys_Jam/Library/**
 Brackeys_Jam/Temp/**
+**/SensorToolkit/**
