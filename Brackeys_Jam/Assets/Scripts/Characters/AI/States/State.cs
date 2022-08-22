@@ -1,3 +1,5 @@
+using SensorToolkit;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,35 +10,44 @@ public abstract class State : MonoBehaviour
 
     [SerializeField] protected float resetTime = 0.2f;
     [SerializeField] protected State nextState;
+    protected bool reactToPlayer = true;
     protected NavMeshAgent navMeshAgent;
+    protected Transform playerTransform;
+    protected TriggerSensor triggerSensor;
     protected Coroutine actionCoroutine;
+
     protected bool hasStarted = false, isPaused = true;
-    protected bool alwaysUpdate = false, activeAction = true;
+    protected bool alwaysUpdate = false, stateIsActive = true;
     protected float timer = 0;
 
-    public virtual void Initialize(NavMeshAgent navMeshAgent)
+    public virtual void Initialize(Transform playerTransform, NavMeshAgent navMeshAgent, TriggerSensor triggerSensor)
     {
         this.navMeshAgent = navMeshAgent;
+        this.playerTransform = playerTransform;
+        this.triggerSensor = triggerSensor;
     }
 
     public virtual void Update()
     {
         if (alwaysUpdate || (hasStarted && !isPaused))
-            UpdateAction();
+            UpdateState();
         timer += Time.deltaTime;
     }
 
-    public abstract void UpdateAction();
+    public abstract void UpdateState();
 
+    public abstract void OnDetected();
 
-    public virtual void StartAction()
+    public abstract void OnLostDetection();
+
+    public virtual void StartState()
     {
         hasStarted = true;
         isPaused = false;
         timer = 0;
     }
 
-    public virtual void StopAction()
+    public virtual void StopState()
     {
         isPaused = true;
         hasStarted = false;
@@ -55,18 +66,18 @@ public abstract class State : MonoBehaviour
 
     public virtual void KillAction()
     {
-        StopAction();
+        StopState();
         hasStarted = false;
         Destroy(this);
     }
     public virtual void FinishAction()
     {
-        StopAction();
-        nextState.StartAction();
+        StopState();
+        nextState.StartState();
     }
     protected virtual bool CanPerformAction()
     {
-        return activeAction && timer >= resetTime;
+        return stateIsActive && timer >= resetTime;
     }
     protected virtual IEnumerator PerformAction()
     {
@@ -74,12 +85,11 @@ public abstract class State : MonoBehaviour
     }
     public void SetActive(bool value)
     {
-        activeAction = value;
+        stateIsActive = value;
     }
 
     private void OnDisable()
     {
-        activeAction = false;
+        stateIsActive = false;
     }
-
 }

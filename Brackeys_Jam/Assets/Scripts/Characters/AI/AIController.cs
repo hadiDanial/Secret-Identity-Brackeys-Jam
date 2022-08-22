@@ -1,3 +1,4 @@
+using SensorToolkit;
 using StarterAssets;
 using System;
 using System.Collections;
@@ -11,8 +12,11 @@ using UnityEngine.AI;
 [RequireComponent(typeof(LineRenderer))]
 public class AIController : MonoBehaviour
 {
-    [SerializeField] private Transform target;
+    [SerializeField] private Transform playerTransform;
     [SerializeField] private float recalculatePathDelta = 0.1f;
+    [SerializeField, Tooltip("The default state for this AI.")] private State initialState;
+
+    [SerializeField] private Vector3 desiredVelocity;
     private Vector3 previousLocation;
 
     private NavMeshAgent navMeshAgent;
@@ -20,7 +24,16 @@ public class AIController : MonoBehaviour
     private MovementController movementController;
     private CharacterController characterController;
     private LineRenderer lineRenderer;
-    [SerializeField] private Vector3 desiredVelocity;
+    private TriggerSensor triggerSensor;
+
+    private State[] states;
+    private State currentState;
+
+    public static event Detected OnDetectedEvent;
+    public delegate void Detected(AIController aiController);
+    public static event LostDetection OnLostDetectionEvent;
+    public delegate void LostDetection(AIController aiController);
+
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -28,20 +41,34 @@ public class AIController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         movementController = GetComponent<MovementController>();
         lineRenderer = GetComponent<LineRenderer>();
-        previousLocation = target.position;
+        triggerSensor = GetComponentInChildren<TriggerSensor>();
+        previousLocation = playerTransform.position;
+        navMeshAgent.SetDestination(playerTransform.position);
+        InitializeStates();
+    }
+
+    private void InitializeStates()
+    {
+        states = GetComponents<State>();
+        foreach (State state in states)
+        {
+            state.Initialize(playerTransform, navMeshAgent, triggerSensor);
+        }
+        currentState = initialState;
+        currentState?.StartState();
     }
 
     void Update()
     {
-        if (Vector3.Distance(target.position, previousLocation) > recalculatePathDelta)
-            navMeshAgent.SetDestination(target.position);
+        if (Vector3.Distance(playerTransform.position, previousLocation) > recalculatePathDelta)
+            navMeshAgent.SetDestination(playerTransform.position);
 
         if (navMeshAgent.pathStatus == NavMeshPathStatus.PathComplete)
         {
             desiredVelocity = navMeshAgent.desiredVelocity.normalized;
             navMeshAgent.updatePosition = false;
             navMeshAgent.updateRotation = false;
-            if (Vector3.Distance(transform.position, target.position) > navMeshAgent.stoppingDistance)
+            if (Vector3.Distance(transform.position, playerTransform.position) > navMeshAgent.stoppingDistance)
             {
                 inputs.MoveInput(desiredVelocity);
                 DrawPath();
@@ -49,6 +76,7 @@ public class AIController : MonoBehaviour
             else
             {
                 inputs.MoveInput(Vector2.zero);
+                transform.LookAt(playerTransform);
             }
         }
         else
@@ -58,7 +86,18 @@ public class AIController : MonoBehaviour
         }
         navMeshAgent.velocity = characterController.velocity;
         navMeshAgent.nextPosition = transform.position;
-        previousLocation = target.position;
+        previousLocation = playerTransform.position;
+    }
+
+    public void OnDetected()
+    {
+        currentState?.OnDetected();
+        OnDetectedEvent?.Invoke(this);
+    }
+    public void OnLostDetection()
+    {
+        currentState?.OnLostDetection();
+        OnLostDetectionEvent?.Invoke(this);
     }
 
     private void DrawPath()

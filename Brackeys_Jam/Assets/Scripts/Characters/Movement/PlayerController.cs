@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -11,8 +12,11 @@ namespace StarterAssets
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInput))]
     [RequireComponent(typeof(StarterAssetsInputs))]
-    public class ThirdPersonController : MovementController
+    public class PlayerController : MovementController
     {
+        [Header("Detected By:")]
+        [SerializeField] private List<AIController> enemies;
+
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
         public GameObject CinemachineCameraTarget;
@@ -37,6 +41,7 @@ namespace StarterAssets
         private PlayerInput _playerInput;
         private StarterAssetsInputs _starterAssetsInputs;
 
+
         private const float _threshold = 0.01f;
 
         private bool IsCurrentDeviceMouse
@@ -59,6 +64,16 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+        }
+        private void OnEnable()
+        {
+            AIController.OnDetectedEvent += ai => enemies.Add(ai);
+            AIController.OnLostDetectionEvent += ai => enemies.Remove(ai);
+        }
+        private void OnDisable()
+        {
+            AIController.OnDetectedEvent -= ai => enemies.Add(ai);
+            AIController.OnLostDetectionEvent -= ai => enemies.Remove(ai);
         }
 
         protected override void Start()
@@ -92,6 +107,18 @@ namespace StarterAssets
         {
             CameraRotation();
         }
+
+
+        public void OnDetected()
+        {
+
+        }
+        public void OnLostDetection()
+        {
+
+        }
+
+
         protected override void CalculateTargetRotation(Vector3 inputDirection)
         {
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
