@@ -1,0 +1,2 @@
+P:\Unity\Brackeys-Jam-8-2022\Brackeys_Jam\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+P:\Unity\Brackeys-Jam-8-2022\Brackeys_Jam\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache

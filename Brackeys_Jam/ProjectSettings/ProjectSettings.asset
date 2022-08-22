@@ -783,11 +783,11 @@ PlayerSettings:
     m_VersionName: 
   apiCompatibilityLevel: 6
   activeInputHandler: 1
-  cloudProjectId: ae85456c-65f2-47d3-9f8d-52d0ed86710f
+  cloudProjectId: dbeed7c7-e7d8-4237-93b1-f2429eb1ee14
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 
-  organizationId: 
+  projectName: Brackeys_Jam
+  organizationId: brackeys-jam-2022
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   playerDataPath: 
