@@ -205,14 +205,22 @@ namespace StarterAssets
             // update animator if using character
             if (_hasAnimator)
             {
-                _animator.SetFloat(_animIDSpeed, _animationBlend);
-                _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+                if(_controller.velocity.magnitude > 0.05f)
+                {
+                    _animator.SetFloat(_animIDSpeed, _animationBlend);
+                    _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+                }
+                else
+                {
+                    _animator.SetFloat(_animIDSpeed, 0);
+                    _animator.SetFloat(_animIDMotionSpeed, 0);
+                }
             }
         }
 
         protected virtual void CalculateTargetRotation(Vector3 inputDirection)
         {
-            _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg;
+            _targetRotation = inputDirection == Vector3.zero ? 0 : Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg;
         }
 
         protected void JumpAndGravity()

@@ -2,6 +2,7 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -41,6 +42,10 @@ namespace StarterAssets
         private PlayerInput _playerInput;
         private StarterAssetsInputs _starterAssetsInputs;
 
+        [Header("UI")]
+        [SerializeField] private Canvas detectionStatusCanvas;
+        [SerializeField] private Image detectionStatusImage;
+        [SerializeField] private Sprite detectedSprite, undetectedSprite;
 
         private const float _threshold = 0.01f;
 
@@ -63,17 +68,31 @@ namespace StarterAssets
             if (_mainCamera == null)
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+                detectionStatusCanvas.worldCamera = _mainCamera.GetComponent<Camera>();
             }
         }
         private void OnEnable()
         {
-            AIController.OnDetectedEvent += ai => enemies.Add(ai);
-            AIController.OnLostDetectionEvent += ai => enemies.Remove(ai);
+            AIController.OnDetectedEvent += AddDetectingEnemy;
+            AIController.OnLostDetectionEvent += RemoveDetectingEnemy;
         }
         private void OnDisable()
         {
-            AIController.OnDetectedEvent -= ai => enemies.Add(ai);
-            AIController.OnLostDetectionEvent -= ai => enemies.Remove(ai);
+            AIController.OnDetectedEvent -= AddDetectingEnemy;
+            AIController.OnLostDetectionEvent -= RemoveDetectingEnemy;
+        }
+
+        private void AddDetectingEnemy(AIController aIController)
+        {
+            enemies.Add(aIController);
+            if (enemies.Count > 0)
+                detectionStatusImage.sprite = detectedSprite;
+        }
+        private void RemoveDetectingEnemy(AIController aIController)
+        {
+            enemies.Remove(aIController);
+            if (enemies.Count == 0)
+                detectionStatusImage.sprite = undetectedSprite;
         }
 
         protected override void Start()
@@ -106,6 +125,7 @@ namespace StarterAssets
         private void LateUpdate()
         {
             CameraRotation();
+            detectionStatusCanvas.transform.LookAt(_mainCamera.transform.position, _mainCamera.transform.rotation * Vector3.up);
         }
 
 
