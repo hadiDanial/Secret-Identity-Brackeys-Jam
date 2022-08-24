@@ -7,9 +7,16 @@ using UnityEngine.AI;
 
 public class PatrolState : State
 {
+    [SerializeField, Tooltip("Use a custom/predefined path?\nIf true, you have to manually add the waypoints to the list.\nOtherwise, this state will query the PathContainer in the scene for a random path.")]
+    private bool usePredefinedPath;
+    [SerializeField, Tooltip("Move towards a random waypoint?")]
+    private bool randomizePath;
+    [SerializeField, Tooltip("If randomizePath is on, should the same waypoint be selectable again after it was already selected?")]
+    private bool allowSameWaypointInARow;
+
     public List<Waypoint> waypoints;
 
-    private int index = 0;
+    private int index = 0, newIndex;
     private bool hasResetTimer = false;
     private Animator animator;
 
@@ -17,15 +24,21 @@ public class PatrolState : State
     {
         base.Initialize(playerTransform, navMeshAgent, triggerSensor, aiController);
         animator = GetComponent<Animator>();
+        if(!usePredefinedPath)
+        {
+            PathContainer pathContainer = FindObjectOfType<PathContainer>();
+            if (pathContainer != null)
+                waypoints = pathContainer.GetRandomPath();
+        }
     }
 
     public override void UpdateState()
     {
-        if (waypoints.Count < 1 || waypoints[index].location == null)
+        if (waypoints.Count < 1 || waypoints[index].transform == null)
             return;
         aiController.inputs.sprint = waypoints[index].sprintToWaypoint;
         
-        aiController.MoveToTarget(waypoints[index].location);
+        aiController.MoveToTarget(waypoints[index].transform);
         if(aiController.IsStopped())
         {
             if (!hasResetTimer)
@@ -33,12 +46,27 @@ public class PatrolState : State
                 timer = 0;
                 hasResetTimer = true;
                 aiController.CanMove = false;
-                animator?.SetBool(waypoints[index].animationName, true);
+                if(!waypoints[index].animationTriggerName.Equals(""))
+                    animator?.SetBool(waypoints[index].animationTriggerName, true);
             }
             if(timer >= waypoints[index].waitTime)
             {
-                animator?.SetBool(waypoints[index].animationName, false);
-                index = (index + 1) % waypoints.Count;
+                if (!waypoints[index].animationTriggerName.Equals(""))
+                    animator?.SetBool(waypoints[index].animationTriggerName, false);
+                if(randomizePath)
+                {
+                    newIndex = UnityEngine.Random.Range(0, waypoints.Count);
+                    if (!allowSameWaypointInARow)
+                    {
+                        while(newIndex == index)
+                            newIndex = UnityEngine.Random.Range(0, waypoints.Count);
+                    }
+                    index = newIndex;
+                }
+                else
+                {
+                    index = (index + 1) % waypoints.Count;
+                }
                 hasResetTimer = false;
                 aiController.CanMove = true;
             }

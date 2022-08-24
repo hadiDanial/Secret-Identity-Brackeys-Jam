@@ -8,6 +8,7 @@ namespace StarterAssets
 		public Vector3 move;
         public bool jump;
 		public bool sprint;
+		public bool crouch = false;
         [Header("Movement Settings")]
 		public bool analogMovement;
 
@@ -29,6 +30,11 @@ namespace StarterAssets
 		{
 			sprint = newSprintState;
 		}
+
+		public void CrouchInput()
+        {
+			crouch = !crouch;
+        }
 	}
 	
 }

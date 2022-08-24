@@ -37,6 +37,11 @@ namespace StarterAssets
 		{
 			SprintInput(value.isPressed);
 		}
+
+		public void OnCrouch(InputValue value)
+        {
+			CrouchInput();
+        }
 #endif
 
 		public void LookInput(Vector2 newLookDirection)

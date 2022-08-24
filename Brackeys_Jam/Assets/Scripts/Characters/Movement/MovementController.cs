@@ -76,6 +76,7 @@ namespace StarterAssets
         protected int _animIDJump;
         protected int _animIDFreeFall;
         protected int _animIDMotionSpeed;
+        protected int _animIDCrouch;
 
         protected Animator _animator;
         protected CharacterController _controller;
@@ -126,6 +127,7 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDCrouch = Animator.StringToHash("Crouch");
         }
 
         protected void GroundedCheck()
@@ -143,10 +145,9 @@ namespace StarterAssets
             }
         }
 
-        protected void Move()
+        protected virtual void Move()
         {
-            // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            float targetSpeed = GetTargetSpeed();
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -205,7 +206,7 @@ namespace StarterAssets
             // update animator if using character
             if (_hasAnimator)
             {
-                if(_controller.velocity.magnitude > 0.05f)
+                if (_controller.velocity.magnitude > 0.05f)
                 {
                     _animator.SetFloat(_animIDSpeed, _animationBlend);
                     _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
@@ -216,6 +217,12 @@ namespace StarterAssets
                     _animator.SetFloat(_animIDMotionSpeed, 0);
                 }
             }
+        }
+
+        // set target speed based on move speed, sprint speed and if sprint is pressed
+        protected virtual float GetTargetSpeed()
+        {
+            return _input.sprint ? SprintSpeed : MoveSpeed;
         }
 
         protected virtual void CalculateTargetRotation(Vector3 inputDirection)

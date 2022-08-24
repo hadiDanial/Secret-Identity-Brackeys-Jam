@@ -15,6 +15,14 @@ namespace StarterAssets
     [RequireComponent(typeof(StarterAssetsInputs))]
     public class PlayerController : MovementController
     {
+        [Header("Character Settings (Normal, Crouched)")]
+        [SerializeField] private Vector2 characterHeight = new Vector2(1.8f, 0.835f);
+        [SerializeField] private Vector2 characterCenter = new Vector2(0.9f, 0.4175f);
+        [Header("Crouch Movement Speed (Normal, Sprint)")]
+        [SerializeField] private Vector2 crouchSpeed = new Vector2(1, 1.8f);
+        [Header("Crouch Standup Settings")]
+        [SerializeField] private GameObject standupCheck;
+        [SerializeField] private float overlapSphereRadius = 0.3f;
         [Header("Detected By:")]
         [SerializeField] private List<AIController> enemies;
 
@@ -122,22 +130,43 @@ namespace StarterAssets
             Move();
         }
 
+
         private void LateUpdate()
         {
             CameraRotation();
             detectionStatusCanvas.transform.LookAt(_mainCamera.transform.position, _mainCamera.transform.rotation * Vector3.up);
         }
-
-
-        public void OnDetected()
+        protected override void Move()
         {
-
+            if(_input.crouch)
+            {
+                _controller.height = characterHeight.y;
+                _controller.center = Vector2.up * characterCenter.y;
+                _animator.SetBool(_animIDCrouch, true);
+            }
+            else
+            {
+                Collider[] cols = Physics.OverlapSphere(standupCheck.transform.position, overlapSphereRadius, GroundLayers);
+                if (cols == null || cols.Length == 0)
+                {
+                    _controller.height = characterHeight.x;
+                    _controller.center = Vector2.up * characterCenter.x;
+                    _animator.SetBool(_animIDCrouch, false);
+                }
+                else
+                {
+                    Debug.Log("Too low to stand up");
+                    _input.crouch = true;
+                }
+            }
+            base.Move();
         }
-        public void OnLostDetection()
+        protected override float GetTargetSpeed()
         {
-
+            if(_input.crouch)
+                return _input.sprint? crouchSpeed.y : crouchSpeed.x;
+            return _input.sprint ? SprintSpeed : MoveSpeed;
         }
-
 
         protected override void CalculateTargetRotation(Vector3 inputDirection)
         {
