@@ -85,7 +85,7 @@ public class PatrolState : State
             {
                 waypoints = (List<Waypoint>)data;
             }
-            catch (InvalidCastException e)
+            catch (InvalidCastException)
             {
                 PrintDebugErrorMessageInvalidData(data, "Should be List<Waypoint>");
             }

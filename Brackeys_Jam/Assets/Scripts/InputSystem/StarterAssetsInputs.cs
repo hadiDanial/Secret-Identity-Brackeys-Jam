@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
@@ -13,9 +14,16 @@ namespace StarterAssets
 		[Header("Mouse Cursor Settings")]
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
+        private PlayerController playerController;
+		private CostumeChanger costumeChanger;
+        private void Awake()
+        {
+			costumeChanger = GetComponent<CostumeChanger>();
+			playerController = GetComponent<PlayerController>();
+        }
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-		public void OnMove(InputValue value)
+        public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
@@ -42,9 +50,29 @@ namespace StarterAssets
         {
 			CrouchInput();
         }
+
+		public void OnInteract(InputValue value)
+		{
+			InteractInput(value.isPressed);
+		}
+		public void OnChange(InputValue value)
+		{
+			if(playerController.Grounded)
+            {
+				playerController.Change(value.isPressed);
+				costumeChanger.ChangeInput(value.isPressed);
+            }
+		}
+
+		public void InteractInput(bool isPressed)
+        {
+			if (playerController != null && isPressed)
+				playerController.Interact();
+        }
+
 #endif
 
-		public void LookInput(Vector2 newLookDirection)
+        public void LookInput(Vector2 newLookDirection)
 		{
 			look = newLookDirection;
 		}
@@ -58,6 +86,6 @@ namespace StarterAssets
 		{
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
-	}
+    }
 	
 }

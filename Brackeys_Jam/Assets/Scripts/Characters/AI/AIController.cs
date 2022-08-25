@@ -28,6 +28,14 @@ public class AIController : MonoBehaviour
     private MovementController movementController;
     private CharacterController characterController;
     private LineRenderer lineRenderer;
+
+    internal void ReplaceActiveState(State newActiveState)
+    {
+        currentState.StopState();
+        currentState = newActiveState;
+        currentState.StartState();
+    }
+
     private TriggerSensor triggerSensor;
 
     private State[] states;

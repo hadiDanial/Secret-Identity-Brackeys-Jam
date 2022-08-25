@@ -30,7 +30,7 @@ public class SearchState : State
         {
             lastSeenPosition = (Vector3)data;
         }
-        catch (InvalidCastException e)
+        catch (InvalidCastException)
         {
             PrintDebugErrorMessageInvalidData(data, "Must be a Vector3 position.");
         }
@@ -132,13 +132,18 @@ public class SearchState : State
 
     private void OnSearchSuccess()
     {
+        StopSearching();
+        Debug.Log("Search successful, returning to " + previousState);
+        ActivatePreviousStateWithData();
+    }
+
+    private void StopSearching()
+    {
         foreach (Sequence sequence in sequences)
         {
             sequence.Kill();
         }
-        Debug.Log("Search successful, returning to " + previousState);
         ResetSearchState();
-        ActivatePreviousStateWithData();
     }
 
     private void ChooseNewLocationToSearch()
@@ -222,6 +227,13 @@ public class SearchState : State
         GameObject.Destroy(currentTarget);
         base.FinishAction();
     }
+
+    public override void StopState()
+    {
+        base.StopState();
+        StopSearching();
+    }
+
     public override string ToString()
     {
         return "Search State";

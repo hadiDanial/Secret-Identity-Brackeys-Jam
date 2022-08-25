@@ -101,7 +101,7 @@ public class FollowState : State
             {
                 target = (Transform)data;
             }
-            catch (InvalidCastException e)
+            catch (InvalidCastException)
             {
                 PrintDebugErrorMessageInvalidData(data, "Should be a Transform for the target to follow.");
             }

@@ -62,6 +62,103 @@ Transform:
   m_Father: {fileID: 8558751307862176844}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &379801128
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 379801129}
+  - component: {fileID: 379801130}
+  m_Layer: 8
+  m_Name: Interactable Ray Sensor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &379801129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379801128}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.98, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2233054494694658240}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &379801130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379801128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eef69e252fee6848bdd23e5429abac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreList: []
+  EnableTagFilter: 0
+  AllowedTags: []
+  OnDetected:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1564639783130303089}
+        m_TargetAssemblyTypeName: StarterAssets.PlayerController, Assembly-CSharp
+        m_MethodName: SetInteractable
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnLostDetection:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1564639783130303089}
+        m_TargetAssemblyTypeName: StarterAssets.PlayerController, Assembly-CSharp
+        m_MethodName: RemoveInteractable
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  Length: 1.15
+  Radius: 0.5
+  ObstructedByLayers:
+    serializedVersion: 2
+    m_Bits: 513
+  DetectsOnLayers:
+    serializedVersion: 2
+    m_Bits: 5120
+  DetectionMode: 0
+  Direction: {x: 0, y: 0, z: 1}
+  WorldSpace: 0
+  SensorUpdateMode: 0
+  InitialBufferSize: 2
+  DynamicallyIncreaseBufferSize: 1
+  OnObstruction:
+    m_PersistentCalls:
+      m_Calls: []
+  OnClear:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &8558751307862599680
 GameObject:
   m_ObjectHideFlags: 0
@@ -5503,6 +5600,111 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[0].changeTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[0].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599722}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[1].changeTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[1].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599730}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[2].changeTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[2].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599720}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[3].changeTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[3].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599726}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[4].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599728}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[5].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599722}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[6].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599722}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[7].heroOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599722}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[0].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862600150}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[1].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599738}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[2].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599722}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[3].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862599724}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[4].normalOutfit
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[5].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862600150}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[6].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862600150}
+    - target: {fileID: 3899726256649114888, guid: 64dce48905ffd9b4293e595fa6941544,
+        type: 3}
+      propertyPath: heroOutfitPieces.Array.data[7].normalOutfit
+      value: 
+      objectReference: {fileID: 8558751307862600150}
     - target: {fileID: 4416926081852918481, guid: 64dce48905ffd9b4293e595fa6941544,
         type: 3}
       propertyPath: m_Name
@@ -5550,6 +5752,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+--- !u!114 &1564639783130303089 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4416926081852918490, guid: 64dce48905ffd9b4293e595fa6941544,
+    type: 3}
+  m_PrefabInstance: {fileID: 2952854240104366251}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e54e5a728a9234ab24fcf1460ed8a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2233054494694658240 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3893294197879345259, guid: 64dce48905ffd9b4293e595fa6941544,

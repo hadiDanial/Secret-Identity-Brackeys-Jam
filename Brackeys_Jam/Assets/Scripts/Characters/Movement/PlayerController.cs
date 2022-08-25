@@ -1,4 +1,5 @@
 ﻿using SensorToolkit;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
@@ -19,6 +20,7 @@ namespace StarterAssets
         [Header("Character Settings (Normal, Crouched)")]
         [SerializeField] private Vector2 characterHeight = new Vector2(1.8f, 0.835f);
         [SerializeField] private Vector2 characterCenter = new Vector2(0.9f, 0.4175f);
+        [SerializeField] private bool allowRunning = true;
         [Header("Crouch Movement Speed (Normal, Sprint)")]
         [SerializeField] private Vector2 crouchSpeed = new Vector2(1, 1.8f);
         [Header("Crouch Standup Settings")]
@@ -26,7 +28,9 @@ namespace StarterAssets
         [SerializeField] private float overlapSphereRadius = 0.3f;
         [Header("Detected By:")]
         [SerializeField] private List<AIController> enemies;
-        [SerializeField, Tooltip("Read only")] private Interactable interactable;
+
+
+        [SerializeField, Tooltip("Read only")] private Interactable interactable;   
 
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
@@ -56,7 +60,7 @@ namespace StarterAssets
         [SerializeField] private Canvas detectionStatusCanvas;
         [SerializeField] private Image detectionStatusImage;
         [SerializeField] private Sprite detectedSprite, undetectedSprite;
-
+        private bool isChanging;
         private const float _threshold = 0.01f;
         private bool IsCurrentDeviceMouse
         {
@@ -128,7 +132,8 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
+            if(!isChanging)
+                Move();
         }
 
 
@@ -167,9 +172,15 @@ namespace StarterAssets
         }
         protected override float GetTargetSpeed()
         {
-            if(_input.crouch)
-                return _input.sprint? crouchSpeed.y : crouchSpeed.x;
-            return _input.sprint ? SprintSpeed : MoveSpeed;
+            if(allowRunning)
+            {
+                if (_input.crouch)
+                    return _input.sprint? crouchSpeed.y : crouchSpeed.x;
+                return _input.sprint ? SprintSpeed : MoveSpeed;
+            }
+            if (_input.crouch)
+                return crouchSpeed.x;
+            return MoveSpeed;
         }
 
         protected override void CalculateTargetRotation(Vector3 inputDirection)
@@ -178,6 +189,12 @@ namespace StarterAssets
                               _mainCamera.transform.eulerAngles.y;
         }
 
+        internal void Interact()
+        {
+            Debug.Log("Interacting");
+            if (interactable != null)
+                interactable.Interact();
+        }
 
         public void SetInteractable(GameObject obj, SensorToolkit.Sensor sensor)
         {
@@ -200,6 +217,15 @@ namespace StarterAssets
                 }
             }
         }
+
+        internal void Change(bool isPressed)
+        {
+            isChanging = isPressed;
+            if(isChanging)
+                _animator.SetFloat(_animIDSpeed, 0);
+        }
+
+
         //////////////////
         // CAMERA STUFF //
         //////////////////
