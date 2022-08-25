@@ -37,8 +37,10 @@ public abstract class State : MonoBehaviour
     public virtual void Update()
     {
         if (alwaysUpdate || (hasStarted && !isPaused))
+        {
             UpdateState();
-        timer += Time.deltaTime;
+            timer += Time.deltaTime;
+        }
     }
 
     public abstract void UpdateState();
@@ -66,6 +68,7 @@ public abstract class State : MonoBehaviour
         hasStarted = true;
         isPaused = false;
         timer = 0;
+        aiController.SetActiveState(this);
     }
     public virtual void StartState(State previousState)
     {
@@ -110,25 +113,42 @@ public abstract class State : MonoBehaviour
             nextState?.StartState(this);
         }
     }
-
-    public virtual void ActivateNextState(object data = null)
+    public virtual void ActivateNextState()
+    {
+        Debug.Log("Moving from " + this + " to Next State " + nextState);
+        ActivateState(nextState);
+    }
+    public virtual void ActivatePreviousState()
+    {
+        Debug.Log("Moving from " + this + " to Previous State " + previousState);
+        ActivateState(previousState);
+    }
+    public virtual void ActivateNextStateWithData(object data = null)
     {
         Debug.Log("Moving from " + this + " to Next State " + nextState + ", Data = " + data);
-        ActivateState(nextState, data);
+        ActivateState(nextState, true, data);
     }
-    public virtual void ActivatePreviousState(object data = null)
+    public virtual void ActivatePreviousStateWithData(object data = null)
     {
-        Debug.Log("Moving from " + this + " to Previous State " + nextState + ", Data = " + data);
-        ActivateState(previousState, data);
+        Debug.Log("Moving from " + this + " to Previous State " + previousState + ", Data = " + data);
+        ActivateState(previousState, false, data);
     }
-    public virtual void ActivateState(State customState, object data = null)
+    public virtual void ActivateState(State customState, bool passPreviousState = false, object data = null)
     {
         StopState();
         Debug.Log("Moving from " + this + " to " + customState);
-        if(data == null)
-            customState?.StartState(this);
+        if(passPreviousState)
+        {
+            if (data == null)
+                customState?.StartState(this);
+            else
+                customState?.StartState(this, data);
+        }
         else
-            customState?.StartState(this, data);
+        {
+            customState?.StartState();
+
+        }
     }
 
 

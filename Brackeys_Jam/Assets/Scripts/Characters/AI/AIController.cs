@@ -31,7 +31,7 @@ public class AIController : MonoBehaviour
     private TriggerSensor triggerSensor;
 
     private State[] states;
-    private State currentState;
+    [SerializeField, Tooltip("Read only")] private State currentState;
     private bool isStopped = true;
 
     public static event Detected OnDetectedEvent;
@@ -60,6 +60,11 @@ public class AIController : MonoBehaviour
         previousLocation = playerTransform.position;
         navMeshAgent.SetDestination(playerTransform.position);
         InitializeStates();
+    }
+
+    internal void SetActiveState(State state)
+    {
+        currentState = state;
     }
 
     private void InitializeStates()

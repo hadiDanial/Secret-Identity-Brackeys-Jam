@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SensorToolkit;
+using System.Collections.Generic;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
@@ -25,6 +26,7 @@ namespace StarterAssets
         [SerializeField] private float overlapSphereRadius = 0.3f;
         [Header("Detected By:")]
         [SerializeField] private List<AIController> enemies;
+        [SerializeField, Tooltip("Read only")] private Interactable interactable;
 
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
@@ -56,7 +58,6 @@ namespace StarterAssets
         [SerializeField] private Sprite detectedSprite, undetectedSprite;
 
         private const float _threshold = 0.01f;
-
         private bool IsCurrentDeviceMouse
         {
             get
@@ -138,25 +139,28 @@ namespace StarterAssets
         }
         protected override void Move()
         {
-            if(_input.crouch)
+            if(Grounded)
             {
-                _controller.height = characterHeight.y;
-                _controller.center = Vector2.up * characterCenter.y;
-                _animator.SetBool(_animIDCrouch, true);
-            }
-            else
-            {
-                Collider[] cols = Physics.OverlapSphere(standupCheck.transform.position, overlapSphereRadius, GroundLayers);
-                if (cols == null || cols.Length == 0)
+                if (_input.crouch)
                 {
-                    _controller.height = characterHeight.x;
-                    _controller.center = Vector2.up * characterCenter.x;
-                    _animator.SetBool(_animIDCrouch, false);
+                    _controller.height = characterHeight.y;
+                    _controller.center = Vector2.up * characterCenter.y;
+                    _animator.SetBool(_animIDCrouch, true);
                 }
                 else
                 {
-                    Debug.Log("Too low to stand up");
-                    _input.crouch = true;
+                    Collider[] cols = Physics.OverlapSphere(standupCheck.transform.position, overlapSphereRadius, GroundLayers);
+                    if (cols == null || cols.Length == 0)
+                    {
+                        _controller.height = characterHeight.x;
+                        _controller.center = Vector2.up * characterCenter.x;
+                        _animator.SetBool(_animIDCrouch, false);
+                    }
+                    else
+                    {
+                        Debug.Log("Too low to stand up");
+                        _input.crouch = true;
+                    }
                 }
             }
             base.Move();
@@ -173,6 +177,32 @@ namespace StarterAssets
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                               _mainCamera.transform.eulerAngles.y;
         }
+
+
+        public void SetInteractable(GameObject obj, SensorToolkit.Sensor sensor)
+        {
+            Interactable i;
+            if(obj.TryGetComponent<Interactable>(out i))
+            {
+                interactable = i;
+                Debug.Log("Interactable = " + obj.name);
+            }
+        }
+        public void RemoveInteractable(GameObject obj, SensorToolkit.Sensor sensor)
+        {
+            Interactable i;
+            if (obj.TryGetComponent<Interactable>(out i))
+            {
+                if (i == interactable)
+                {
+                    interactable = null;
+                    Debug.Log("Removed Interactable");
+                }
+            }
+        }
+        //////////////////
+        // CAMERA STUFF //
+        //////////////////
         private void CameraRotation()
         {
             // if there is an input and camera position is not fixed
@@ -214,6 +244,8 @@ namespace StarterAssets
             Gizmos.DrawSphere(
                 new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z),
                 GroundedRadius);
+
+            Gizmos.DrawSphere(standupCheck.transform.position, overlapSphereRadius);
         }
     }
 }

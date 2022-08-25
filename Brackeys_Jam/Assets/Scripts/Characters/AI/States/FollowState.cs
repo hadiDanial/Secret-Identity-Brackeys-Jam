@@ -18,16 +18,16 @@ public class FollowState : State
     [SerializeField, Tooltip("What state to go to if we lose line of sight. If null, returns to previous state.\n(Only works if followOnlyIfLOS is active)")]
     private State lostLOSState;
 
-    [SerializeField, Tooltip("Read-only. The current distance towards the player.")] 
+    [SerializeField, Tooltip("Read-only. The current distance towards the player.")]
     private float currentDistanceToPlayer;
 
     private Transform target;
     private Vector3 lastSeenPosition;
-
+    private bool triggeredLOSState = false;
     public override void Initialize(Transform playerTransform, NavMeshAgent navMeshAgent, TriggerSensor triggerSensor, AIController aiController)
     {
         base.Initialize(playerTransform, navMeshAgent, triggerSensor, aiController);
-        target = playerTransform;        
+        target = playerTransform;
     }
 
     public override void StartState(State previousState)
@@ -39,32 +39,54 @@ public class FollowState : State
     public override void UpdateState()
     {
         currentDistanceToPlayer = Vector3.Distance(transform.position, target.position);
-        if(followOnlyIfLOS && triggerSensor.DetectedObjects.Count < 1)
+        aiController.inputs.sprint = allowSprinting;
+        if (followOnlyIfLOS)
         {
-            if(lostLOSState != null)
+            if (triggerSensor.DetectedObjects.Count < 1)
             {
-                ActivateState(lostLOSState, lastSeenPosition);
+                if (lostLOSState != null)
+                {
+                    triggeredLOSState = true;
+                    ActivateState(lostLOSState, true, lastSeenPosition);
+                }
+                else
+                {
+                    ActivatePreviousStateWithData();
+                    Debug.Log("Prev");
+                }
             }
             else
-            {
-                ActivatePreviousState();
-            }
+                aiController.MoveToTarget(target);
         }
         else
         {
-            aiController.inputs.sprint = allowSprinting;
-            if(currentDistanceToPlayer <= nextStateDistance)
+            if (currentDistanceToPlayer <= nextStateDistance)
             {
+                aiController.inputs.move = Vector2.zero;
                 ActivateNextState();
+                Debug.Log("Next");
             }
-            else if(currentDistanceToPlayer >= giveUpDistance)
+            else if (currentDistanceToPlayer >= giveUpDistance)
             {
-                ActivatePreviousState();
+                if (triggeredLOSState)
+                {
+                    aiController.inputs.move = Vector2.zero;
+                    ActivatePreviousStateWithData();
+                    Debug.Log("Prev Gave up");
+                }
+                else
+                {
+                    triggeredLOSState = true;
+                    aiController.inputs.move = Vector2.zero;
+                    ActivateState(lostLOSState, true, lastSeenPosition);
+                    Debug.Log("Lost LOS");
+                }
             }
             else
                 aiController.MoveToTarget(target);
         }
         lastSeenPosition = target.position;
+        //aiController.MoveToTarget(target);
     }
     public override string ToString()
     {
@@ -85,5 +107,29 @@ public class FollowState : State
             }
         }
         StartState(previousState);
+    }
+
+    public override void StartState()
+    {
+        if (triggeredLOSState && triggerSensor.DetectedObjects.Count < 1)
+        {
+            triggeredLOSState = false;
+            ActivatePreviousStateWithData();
+            Debug.Log("Prev in start state");
+        }
+        else
+        {
+            triggeredLOSState = false;
+            base.StartState();
+        }
+    }
+
+    public override void OnDetected()
+    {        
+        detected = true;
+    }
+    public override void OnLostDetection()
+    {
+        detected = false;
     }
 }

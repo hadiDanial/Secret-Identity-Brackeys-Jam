@@ -1143,6 +1143,11 @@ MonoBehaviour:
   GroundLayers:
     serializedVersion: 2
     m_Bits: 513
+  characterHeight: {x: 1.8, y: 0.835}
+  characterCenter: {x: 0.9, y: 0.4175}
+  crouchSpeed: {x: 1, y: 1.8}
+  standupCheck: {fileID: 0}
+  overlapSphereRadius: 0.07
   enemies: []
   CinemachineCameraTarget: {fileID: 8338988566280778634}
   TopClamp: 70
@@ -1185,6 +1190,7 @@ MonoBehaviour:
   move: {x: 0, y: 0, z: 0}
   jump: 0
   sprint: 0
+  crouch: 0
   analogMovement: 0
   look: {x: 0, y: 0}
   cursorLocked: 1
@@ -2644,14 +2650,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8868087485621429541}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8140422785594118734}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}

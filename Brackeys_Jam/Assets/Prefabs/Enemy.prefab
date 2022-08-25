@@ -1170,16 +1170,18 @@ GameObject:
   - component: {fileID: 3893294197879345259}
   - component: {fileID: 6982812146204527121}
   - component: {fileID: 8240592874918520859}
+  - component: {fileID: 637092996}
+  - component: {fileID: 637092997}
+  - component: {fileID: 3233980192682076984}
+  - component: {fileID: 6496246934845471022}
   - component: {fileID: 4416926081852918491}
   - component: {fileID: 3114796273901170613}
   - component: {fileID: 9526335889769358}
   - component: {fileID: 5885216827943657505}
   - component: {fileID: 551580777082762582}
+  - component: {fileID: 7308880432126345929}
   - component: {fileID: 9187930888460140170}
   - component: {fileID: 637092993}
-  - component: {fileID: 7308880432126345929}
-  - component: {fileID: 637092996}
-  - component: {fileID: 637092997}
   m_Layer: 10
   m_Name: Enemy
   m_TagString: Enemy
@@ -1242,6 +1244,96 @@ MonoBehaviour:
   initialState: {fileID: 637092996}
   desiredVelocity: {x: 0, y: 0, z: 0}
   inputs: {fileID: 0}
+  currentState: {fileID: 0}
+--- !u!114 &637092996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e9e92f2898e5f4e8d4db846993168d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reactToPlayer: 1
+  nextState: {fileID: 637092997}
+  previousState: {fileID: 0}
+  preferReturningToPreviousState: 0
+  resetTime: 0.2
+  usePredefinedPath: 0
+  randomizePath: 0
+  allowSameWaypointInARow: 0
+  waypoints: []
+--- !u!114 &637092997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4edd93915811cf3419be7f3f1d120abc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reactToPlayer: 1
+  nextState: {fileID: 0}
+  previousState: {fileID: 0}
+  preferReturningToPreviousState: 0
+  resetTime: 0.2
+  allowSprinting: 0
+  nextStateDistance: 1.3
+  giveUpDistance: 10
+  followOnlyIfLOS: 1
+  lostLOSState: {fileID: 3233980192682076984}
+  currentDistanceToPlayer: 0
+--- !u!114 &3233980192682076984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c6af07e35d36214cab07296b7452fdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reactToPlayer: 1
+  nextState: {fileID: 0}
+  previousState: {fileID: 0}
+  preferReturningToPreviousState: 0
+  resetTime: 0
+  maxSearchSteps: 5
+  minSearchSteps: 2
+  maxSearchStepDistance: 10
+  minSearchStepDistance: 5
+  lookAroundAngle: 45
+  lookAroundTime: 2
+  delayBetweenLooks: 1
+  sprint: 0
+--- !u!114 &6496246934845471022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b3748f5562fc9f4699625c1760c9197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reactToPlayer: 0
+  nextState: {fileID: 0}
+  previousState: {fileID: 0}
+  preferReturningToPreviousState: 0
+  resetTime: 0.2
+  animationTriggerName: 
+  distractionTime: 10
+  distractionPoint: {fileID: 0}
 --- !u!143 &4416926081852918491
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1356,6 +1448,22 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!208 &7308880432126345929
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 0.9, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!120 &9187930888460140170
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1469,65 +1577,6 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!208 &7308880432126345929
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4416926081852918481}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.5, y: 0.9, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 1, z: 0}
-  m_TimeToStationary: 0.5
---- !u!114 &637092996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4416926081852918481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90e9e92f2898e5f4e8d4db846993168d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  reactToPlayer: 1
-  nextState: {fileID: 637092997}
-  previousState: {fileID: 0}
-  preferReturningToPreviousState: 0
-  resetTime: 0.2
-  randomizePath: 0
-  allowSameWaypointInARow: 0
-  waypoints: []
---- !u!114 &637092997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4416926081852918481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4edd93915811cf3419be7f3f1d120abc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  reactToPlayer: 1
-  nextState: {fileID: 0}
-  previousState: {fileID: 0}
-  preferReturningToPreviousState: 0
-  resetTime: 0.2
-  allowSprinting: 0
-  nextStateDistance: 1.3
-  giveUpDistance: 10
-  followOnlyIfLOS: 0
-  lostLOSState: {fileID: 0}
-  currentDistanceToPlayer: 0
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0
