@@ -29,11 +29,17 @@ public class AIController : MonoBehaviour
     private CharacterController characterController;
     private LineRenderer lineRenderer;
 
-    internal void ReplaceActiveState(State newActiveState)
+    internal void ReplaceActiveState(State newActiveState, bool savePreviousState = false)
     {
         currentState.StopState();
+        State oldState = currentState;
         currentState = newActiveState;
-        currentState.StartState();
+        if (savePreviousState)
+        {
+            currentState.StartState(oldState);
+        }
+        else
+            currentState.StartState();
     }
 
     private TriggerSensor triggerSensor;
@@ -52,6 +58,7 @@ public class AIController : MonoBehaviour
     private bool canMove = true;
     private bool distanceBiggerThanStoppingDistance;
     public bool CanMove { get => canMove; set => canMove = value; }
+    public bool DistanceBiggerThanStoppingDistance { get => distanceBiggerThanStoppingDistance; private set => distanceBiggerThanStoppingDistance = value; }
 
     void Start()
     {
@@ -67,7 +74,13 @@ public class AIController : MonoBehaviour
         triggerSensor = GetComponentInChildren<TriggerSensor>();
         previousLocation = playerTransform.position;
         navMeshAgent.SetDestination(playerTransform.position);
+        lineRenderer.enabled = false;
         InitializeStates();
+    }
+
+    internal GameObject GetHoldPoint()
+    {
+        return movementController.interactableHoldPoint;
     }
 
     internal void SetActiveState(State state)
@@ -98,8 +111,8 @@ public class AIController : MonoBehaviour
 
     public void MoveToTarget(Transform target)
     {
-        distanceBiggerThanStoppingDistance = Vector3.Distance(transform.position, target.position) > navMeshAgent.stoppingDistance + agentDiameter;
-        if (distanceBiggerThanStoppingDistance)
+        DistanceBiggerThanStoppingDistance = Vector3.Distance(transform.position, target.position) > navMeshAgent.stoppingDistance + navMeshAgent.radius;
+        if (DistanceBiggerThanStoppingDistance)
         {
             TurnNavMeshAgentOn();
         }
@@ -119,11 +132,11 @@ public class AIController : MonoBehaviour
             desiredVelocity = navMeshAgent.desiredVelocity.normalized;
             navMeshAgent.updatePosition = false;
             navMeshAgent.updateRotation = false;
-            if (distanceBiggerThanStoppingDistance)
+            if (DistanceBiggerThanStoppingDistance)
             {
                 inputs.MoveInput(desiredVelocity);
                 isStopped = false;
-                DrawPath();
+                //DrawPath();
             }
             else
             {
@@ -140,6 +153,23 @@ public class AIController : MonoBehaviour
         navMeshAgent.velocity = characterController.velocity;
         navMeshAgent.nextPosition = transform.position;
         previousLocation = target.position;
+    }
+
+    internal void ForceFollow()
+    {
+        FollowState fs = null;
+        foreach (State state in states)
+        {
+            if (typeof(FollowState).IsInstanceOfType(state))
+            {
+                fs = (FollowState)state;
+                break;
+            }
+        }
+        if(fs != null && fs != currentState)
+        {
+            currentState.ActivateState(fs);
+        }
     }
 
     private void TurnNavMeshAgentOff()

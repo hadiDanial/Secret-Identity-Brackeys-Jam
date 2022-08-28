@@ -164,7 +164,10 @@ public abstract class State : MonoBehaviour
     {
         stateIsActive = value;
     }
-
+    public bool IsActive()
+    {
+        return hasStarted;
+    }
     private void OnDisable()
     {
         stateIsActive = false;
@@ -174,5 +177,10 @@ public abstract class State : MonoBehaviour
     protected void PrintDebugErrorMessageInvalidData(object data, string message)
     {
         Debug.LogError("Invalid data passed to state " + ToString() + "\n" + data + "\n" + message);
+    }
+
+    internal bool IsStopped()
+    {
+        return aiController.IsStopped();
     }
 }

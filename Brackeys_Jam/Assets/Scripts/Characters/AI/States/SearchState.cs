@@ -56,7 +56,7 @@ public class SearchState : State
         currentTarget.transform.position = lastSeenPosition;
         aiController.inputs.move = Vector3.zero;
         sequences = new HashSet<Sequence>();
-        triggerSensor.Pulse();
+        //triggerSensor.Pulse();
     }
 
     public override void UpdateState()
@@ -107,7 +107,7 @@ public class SearchState : State
             {
                 if (isMoving)
                 {
-                    Debug.Log("Moving to target");
+                    //Debug.Log("Moving to target");
 
                     aiController.MoveToTarget(currentTarget.transform);
                     isMoving = !aiController.IsStopped();

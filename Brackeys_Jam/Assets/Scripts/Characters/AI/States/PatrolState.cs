@@ -92,4 +92,17 @@ public class PatrolState : State
         }
         StartState(previousState);
     }
+    public override void OnDetected()
+    {
+        detected = true;
+        if (reactToPlayer)
+        {
+            StopState();
+            ActivateNextState();
+        }
+    }
+    public override void OnLostDetection()
+    {
+        detected = false;
+    }
 }

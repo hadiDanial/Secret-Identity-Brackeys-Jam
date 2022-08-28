@@ -58,6 +58,11 @@ namespace StarterAssets
         [Tooltip("What layers the character uses as ground")]
         public LayerMask GroundLayers;
 
+        [SerializeField, Tooltip("This object will be the parent of any interactable that can be held.")]
+        internal GameObject interactableHoldPoint;
+        [SerializeField, Tooltip("This object will be the parent of any interactable that can be held.")]
+        protected DistractionItem heldDistractionItem;
+
         // player
         protected float _speed;
         protected float _animationBlend;
@@ -84,9 +89,6 @@ namespace StarterAssets
         protected GameObject _mainCamera;
 
         protected bool _hasAnimator;
-
-      
-
 
         private void Awake()
         {
@@ -331,6 +333,25 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        protected virtual void SetDistractionItem(DistractionItem item)
+        {
+            if(heldDistractionItem != null)
+            {
+                heldDistractionItem.Release();
+                heldDistractionItem = null;
+                return;
+            }
+            if (item == heldDistractionItem)
+                return;
+            heldDistractionItem = item;
+            heldDistractionItem.Grab(interactableHoldPoint);
+        }
+
+        protected bool HasDistractionItem()
+        {
+            return heldDistractionItem != null;
         }
     }
 }

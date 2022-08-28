@@ -1,3 +1,4 @@
+using DG.Tweening;
 using SensorToolkit;
 using System;
 using System.Collections;
@@ -8,12 +9,13 @@ using UnityEngine.AI;
 [RequireComponent(typeof(RangeSensor)), RequireComponent(typeof(NavMeshObstacle)), RequireComponent(typeof(AudioSource))]
 public class DistractionPoint : Waypoint, Interactable
 {
-    [SerializeField, Range(1, 10)] private int maxAICount = 2;
+    [SerializeField, Range(1, 30)] private int maxAICount = 15;
     [SerializeField, Range(0.15f, 3f)] private float maxStandingDistanceFromPoint = 1f;
     [SerializeField] private List<DistractedState> aiList;
     [SerializeField] private bool isActive = false;
     [SerializeField] private float timer = 0;
-
+    [SerializeField] private float destroyTimeAfterDeactivation = 5;
+    private bool hasBeenActivated = false;
     private Animator animator;
     private RangeSensor rangeSensor;
     private AudioSource audioSource;
@@ -28,8 +30,12 @@ public class DistractionPoint : Waypoint, Interactable
     {
         if (isActive)
         {
-            if (aiList.Count > 0)
+            if (aiList.Count > 0 && AtLeastOneAIHasStopped())
                 timer += Time.deltaTime;
+            else
+            {
+                AttractNPCs();
+            }
             if (timer >= waitTime)
                 Deactivate();
         }
@@ -40,34 +46,52 @@ public class DistractionPoint : Waypoint, Interactable
         }
     }
 
+    private bool AtLeastOneAIHasStopped()
+    {
+        foreach (DistractedState distractedState in aiList)
+        {
+            if (distractedState.IsStopped())
+                return true;
+        }
+        return false;
+    }
+
     public void Activate()
     {
+        if (hasBeenActivated) return;
         timer = 0;
         isActive = true;
-        if(animator != null)
+        hasBeenActivated = true;
+        if (animator != null)
         {
             animator.Play(animationTriggerName);
         }
+        AttractNPCs();
+        audioSource.Play();
+    }
+
+    private void AttractNPCs()
+    {
         List<DistractedState> newlyDistracted = new List<DistractedState>();
         foreach (GameObject item in rangeSensor.DetectedObjects)
         {
             DistractedState d;
-            if(item.TryGetComponent<DistractedState>(out d))
+            if (item.TryGetComponent<DistractedState>(out d))
             {
-                newlyDistracted.Add(d);
+                if (!d.IsActive())
+                    newlyDistracted.Add(d);
             }
         }
         for (int i = 0; i < newlyDistracted.Count && maxAICount - aiList.Count > 0; i++)
         {
-            if(AddAIToDistraction(newlyDistracted[i]))
+            if (AddAIToDistraction(newlyDistracted[i]))
             {
                 newlyDistracted[i].SetDistractionPoint(this);
                 newlyDistracted[i].StartDistracting();
-            }            
+            }
         }
-        audioSource.Play();
     }
-  
+
     public void Deactivate()
     {
         if (animator != null)
@@ -77,6 +101,7 @@ public class DistractionPoint : Waypoint, Interactable
         isActive = false;
         StopDistracting();
         audioSource.Stop();
+        DOTween.Sequence().AppendInterval(destroyTimeAfterDeactivation).OnComplete(() => Destroy(gameObject));
     }
     internal bool IsActive()
     {
@@ -86,11 +111,17 @@ public class DistractionPoint : Waypoint, Interactable
 
     private void StopDistracting()
     {
-        foreach (DistractedState state in aiList)
+        for (int i = aiList.Count - 1; i >= 0; i--)
         {
-            state.StopDistraction();
+            if(aiList[i].IsStopped() && Vector3.Distance(aiList[i].transform.position, transform.position) <= maxStandingDistanceFromPoint + 0.5f)
+            {
+                aiList[i].StopDistraction();
+                aiList.Remove(aiList[i]);
+            }
+
         }
-        aiList.Clear();
+        
+        //aiList.Clear();
     }
 
     public bool AddAIToDistraction(DistractedState distractedState)

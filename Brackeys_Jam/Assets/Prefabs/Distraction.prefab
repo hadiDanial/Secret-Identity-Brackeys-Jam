@@ -106,7 +106,6 @@ MonoBehaviour:
   maxAICount: 2
   maxStandingDistanceFromPoint: 1
   aiList: []
-  deactivateAfterAIIsDone: 0
   isActive: 0
   timer: 0
 --- !u!208 &1704144643390530132
@@ -238,7 +237,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7218072004299315105
 Transform:
   m_ObjectHideFlags: 0
