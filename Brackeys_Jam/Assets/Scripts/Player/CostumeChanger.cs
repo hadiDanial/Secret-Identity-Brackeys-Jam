@@ -21,6 +21,7 @@ public class CostumeChanger : MonoBehaviour
     private void Start()
     {
         playerController = GetComponent<PlayerController>();
+        changeFillImage.transform.parent.GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         changeFillImage.fillAmount = 0;
     }
     private void Update()
@@ -30,7 +31,6 @@ public class CostumeChanger : MonoBehaviour
             changeTimer += Time.deltaTime;
             float changeTime = heroOutfitPieces[index].changeTime;
             changeFillImage.fillAmount = Mathf.Clamp01(changeTimer / changeTime);
-            changeFillImage.transform.parent.GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             //Debug.Log("Changing, time: " + changingTimer);
             if (changeTimer >= changeTime)
             {
