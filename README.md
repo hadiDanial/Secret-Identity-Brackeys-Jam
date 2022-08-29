@@ -3,6 +3,7 @@ A Unity game made for the Brackeys 2022.2 game jam about a superhero working an 
 
 You can play the game [here](https://hadidanial.itch.io/secret-identity).
 
+The code could use a lot of refactoring, but seeing as this was developed under a strict deadline in order to finish on time for the jam, I'm very pleased with how it turned out.
 
 *Please note that while this repository contains all the code I wrote, it does not include the 3D models, animations, or assets we used, 
 such as DOTWeen and SensorToolkit, as they are paid assets and I do not have a license to distribute them. 
